@@ -1,0 +1,35 @@
+{
+  "name": "simple-crud-form",
+  "version": "1.0.0",
+  "description": "Fullstack app using crud operations with mongodb. ",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbdulMoeez1278/simple-crud-form.git"
+  },
+  "keywords": [
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "HTML",
+    "TailwindCSS",
+    "JS",
+    "RESTAPI's"
+  ],
+  "author": "Abdul Moeez Tariq",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AbdulMoeez1278/simple-crud-form/issues"
+  },
+  "homepage": "https://github.com/AbdulMoeez1278/simple-crud-form#readme",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "mongoose": "^8.18.0",
+    "nodemon": "^3.1.10"
+  }
+}

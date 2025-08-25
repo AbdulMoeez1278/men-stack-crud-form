@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Simple CRUD Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 flex flex-col items-center justify-start min-h-screen p-8 space-y-8">
+
+    <form id="formInputs" class="w-full max-w-4xl bg-white p-8 rounded-lg shadow-md" method="post" autocomplete="off">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">User Information</h2>
+
+        <div class="mb-4">
+            <label for="firstname" class="block text-gray-700 font-medium mb-2">First Name</label>
+            <input type="text" id="firstname" name="firstname" placeholder="Enter your first name"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required>
+        </div>
+
+        <div class="mb-4">
+            <label for="lastname" class="block text-gray-700 font-medium mb-2">Last Name</label>
+            <input type="text" id="lastname" name="lastname" placeholder="Enter your last name"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required>
+        </div>
+
+        <div class="mb-6">
+            <label for="city" class="block text-gray-700 font-medium mb-2">City</label>
+            <input type="text" id="city" name="city" placeholder="Enter your city"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required>
+        </div>
+
+        <div class="mt-6 flex items-center gap-4">
+            <button id="sendData" type="submit"
+                class="flex-1 bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">
+                Submit
+            </button>
+
+            <button id="clearAllData" type="reset" onclick=`input.value="" `
+                class="flex-1 bg-gray-400 text-white font-semibold py-2 px-4 rounded-md hover:bg-gray-500 transition duration-200">
+                Clear
+            </button>
+        </div>
+    </form>
+
+    <!-- Container for displaying list of users -->
+    <section class="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold mb-4 text-gray-800 text-center">Users List</h3>
+
+        <!-- List Heading -->
+        <div class="grid grid-cols-6 gap-4 px-4 py-2 bg-gray-200 font-semibold text-gray-800 rounded-t-md">
+            <div>No.</div>
+            <div>First Name</div>
+            <div>Last Name</div>
+            <div>City</div>
+            <div class="col-span-2 text-center">Actions</div>
+        </div>
+
+        <form id="bulkDeleteForm" method="post" action="/delete-selected">
+            <!-- User Data List -->
+            <ul id="usersList" class="divide-y divide-gray-200 bg-white rounded-b-md shadow">
+                <% for (let i=0; i < result.length; i++) { %>
+
+                    <li class="grid grid-cols-6 gap-4 px-4 py-3 items-center hover:bg-gray-50 transition">
+                        <div class="flex items-center gap-x-3">
+                            <!-- Checkbox -->
+                            <input type="checkbox" name="selectedIds" value="<%= result[i]._id %>"
+                                class="user-checkbox w-4 h-4 text-blue-600 border-gray-300 rounded"
+                                title="Select for bulk delete" />
+
+                            <!-- Serial number -->
+                            <span class="text-gray-800 font-medium">
+                                <%= i + 1 %>
+                            </span>
+                        </div>
+
+                        <div>
+                            <%= result[i].firstname %>
+                        </div>
+                        <div>
+                            <%= result[i].lastname %>
+                        </div>
+                        <div>
+                            <%= result[i].city %>
+                        </div>
+
+                        <!-- Edit Button -->
+                        <div class="col-span-2 flex justify-center items-center text-center gap-4">
+                            <a href="/update/<%= result[i]._id %>" title="Update"
+                                class="text-blue-500 hover:text-blue-700 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M11 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                </svg>
+                            </a>
+                            <!-- </div> -->
+
+                            <!-- Delete Button -->
+                            <form action="/delete/<%= result[i]._id %>" autocomplete="off">
+                                <button type="submit" title="Delete" class="text-red-500 hover:text-red-700 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 16" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                    <% } %>
+            </ul>
+
+            <!-- Bulk Delete Button -->
+            <div class="flex justify-end mt-6">
+                <button type="submit"
+                    class="bg-red-900 hover:bg-red-600 text-white font-medium px-6 py-2 rounded-md shadow-md transition-all duration-200 disabled:opacity-50"
+                    id="deleteSelectedBtn" disabled>
+                    🗑️ Delete Selected
+                </button>
+            </div>
+        </form>
+    </section>
+
+</body>
+
+</html>

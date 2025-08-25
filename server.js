@@ -1,0 +1,164 @@
+const express = require("express"); // include express module
+// const mongoose = require("mongoose"); // include mongoose module
+const { MongoClient, ObjectId } = require("mongodb"); // import mongoClient module
+const path = require("path");
+
+// import the model - schema file
+// const form = require("./models/form");
+
+// initialize express as an app
+const app = express();
+
+// creating middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: false })); // This middleware is used to parse incoming form data
+
+// we can render static files as well
+// app.use(express.static("public")); // rendering static files
+
+// using template engine
+app.set("view engine", "ejs");
+app.set("views", "./views");
+
+// mongoDB Connection
+const dbName = "crud-form";
+const collectionName = "forms";
+const url = "mongodb://127.0.0.1:27017";
+const client = new MongoClient(url); // class that allows for making Connections to MongoDB
+
+// create a connection with database
+const connection = async () => {
+  const connect = await client.connect();
+  return await connect.db(dbName);
+};
+// mongoose.connect("mongodb://127.0.0.1:27017/crud-form");
+
+// intialized port and hostname
+const port = 3000;
+const hostname = "127.0.0.1";
+
+// GET API Route
+app.get("/", async (req, res) => {
+  const db = await connection();
+  const collection = db.collection(collectionName);
+  const result = await collection.find().toArray();
+
+  res.render("home", { result });
+});
+
+app.get("/update/updateSuccess", (req, res) => {
+  res.render("updateSuccess"); // or send your success page response here
+});
+
+app.get("/update", (req, res) => {
+  res.render("updates");
+});
+
+app.get("/success", (req, res) => {
+  res.render("success");
+});
+
+app.get("/error", (req, res) => {
+  res.render("error");
+});
+
+// POST API Route
+app.post("/", async (req, res) => {
+  const db = await connection();
+  const collection = db.collection(collectionName);
+  const result = await collection.insertOne(req.body);
+  if (result) {
+    res.redirect("/success");
+  } else {
+    res
+      .status(500)
+      .send({ error: "Failed to save data", details: error.message });
+  }
+});
+
+// Update API Routes - update using GET & POST API Route
+app.get("/update/:id", async (req, res) => {
+  const db = await connection();
+  const collection = db.collection(collectionName);
+  const result = await collection.findOne({
+    _id: new ObjectId(req.params.id),
+  });
+  console.log("Received ID:", req.params.id);
+  if (result) {
+    res.render("update", { result });
+  } else {
+    res.status(400).send({
+      status: "error",
+      message: "Update failed. Please try again or contact support.",
+    });
+  }
+});
+
+app.post("/update/:id", async (req, res) => {
+  const db = await connection();
+  const collection = db.collection(collectionName);
+  const filter = { _id: new ObjectId(req.params.id) };
+  const updateData = {
+    $set: {
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
+      city: req.body.city,
+    },
+  };
+  const result = await collection.updateOne(filter, updateData);
+  if (result) {
+    res.redirect("updateSuccess");
+  } else {
+    res.status(400).send({
+      status: "error",
+      message: "Update failed. Please try again or contact support.",
+    });
+  }
+});
+
+// DELETE API Route - delete using GET & POST API Route
+app.get("/delete/:id", async (req, res) => {
+  const db = await connection();
+  const collection = db.collection(collectionName);
+  const result = await collection.deleteOne({
+    _id: new ObjectId(req.params.id),
+  });
+  if (result) {
+    res.redirect("/");
+  } else {
+    res.status(400).send({
+      status: "error",
+      message:
+        "Unable to delete the entry. It may not exist or something went wrong. Please try again.",
+    });
+  }
+});
+
+// multi-delete items using checkboxes
+app.post("/delete-selected", async (req, res) => {
+  const db = await connection();
+  const collection = db.collection(collectionName);
+  let selectedIds = undefined;
+
+  if (Array.isArray(req.body.selectedIds)) {
+    selectedIds = req.body.selectedIds.map((id) => new ObjectId(id));
+  } else {
+    selectedIds = [new ObjectId(req.body.selectedIds)];
+  }
+
+  const result = await collection.deleteMany({ _id: { $in: selectedIds } });
+  if (result) {
+    res.redirect("/");
+  } else {
+    res.status(400).send({
+      status: "error",
+      message:
+        "Unable to delete the entry. It may not exist or something went wrong. Please try again.",
+    });
+  }
+});
+
+// server listening
+app.listen(port, hostname, () => {
+  console.log(`Server is listening on ${hostname}:${port}`);
+});
