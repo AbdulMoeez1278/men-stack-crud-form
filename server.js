@@ -11,7 +11,7 @@ const app = express();
 
 // creating middlewares
 app.use(express.json());
-app.use(express.urlencoded({ extended: false })); // This middleware is used to parse incoming form data
+app.use(express.urlencoded({ extended: true })); // This middleware is used to parse incoming form data
 
 // we can render static files as well
 // app.use(express.static("public")); // rendering static files
@@ -116,13 +116,17 @@ app.post("/update/:id", async (req, res) => {
   }
 });
 
-// DELETE API Route - delete using GET & POST API Route
-app.get("/delete/:id", async (req, res) => {
+// DELETE API Route - using POST API Route
+app.post("/delete/:id", async (req, res) => {
   const db = await connection();
   const collection = db.collection(collectionName);
   const result = await collection.deleteOne({
     _id: new ObjectId(req.params.id),
   });
+
+  // console the single id to check if it is working properly or not
+  console.log(req.params.id);
+
   if (result) {
     res.redirect("/");
   } else {
@@ -135,18 +139,21 @@ app.get("/delete/:id", async (req, res) => {
 });
 
 // multi-delete items using checkboxes
-app.post("/delete-selected", async (req, res) => {
+app.post("/multi-delete", async (req, res) => {
   const db = await connection();
   const collection = db.collection(collectionName);
-  let selectedIds = undefined;
+  let selectedTasks = undefined;
 
-  if (Array.isArray(req.body.selectedIds)) {
-    selectedIds = req.body.selectedIds.map((id) => new ObjectId(id));
+  // console the id's to check if it is working properly or not
+  console.log(req.body.selectedTasks);
+
+  if (Array.isArray(req.body.selectedTasks)) {
+    selectedTasks = req.body.selectedTasks.map((id) => new ObjectId(id));
   } else {
-    selectedIds = [new ObjectId(req.body.selectedIds)];
+    selectedTasks = [new ObjectId(req.body.selectedTasks)];
   }
 
-  const result = await collection.deleteMany({ _id: { $in: selectedIds } });
+  const result = await collection.deleteMany({ _id: { $in: selectedTasks } });
   if (result) {
     res.redirect("/");
   } else {

@@ -60,7 +60,7 @@
             <div class="col-span-2 text-center">Actions</div>
         </div>
 
-        <form id="bulkDeleteForm" method="post" action="/delete-selected">
+        <form action="/multi-delete" method="post">
             <!-- User Data List -->
             <ul id="usersList" class="divide-y divide-gray-200 bg-white rounded-b-md shadow">
                 <% for (let i=0; i < result.length; i++) { %>
@@ -68,7 +68,7 @@
                     <li class="grid grid-cols-6 gap-4 px-4 py-3 items-center hover:bg-gray-50 transition">
                         <div class="flex items-center gap-x-3">
                             <!-- Checkbox -->
-                            <input type="checkbox" name="selectedIds" value="<%= result[i]._id %>"
+                            <input type="checkbox" name="selectedTasks" value="<%= result[i]._id %>"
                                 class="user-checkbox w-4 h-4 text-blue-600 border-gray-300 rounded"
                                 title="Select for bulk delete" />
 
@@ -101,15 +101,14 @@
                             <!-- </div> -->
 
                             <!-- Delete Button -->
-                            <form action="/delete/<%= result[i]._id %>" autocomplete="off">
-                                <button type="submit" title="Delete" class="text-red-500 hover:text-red-700 transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                        viewBox="0 0 24 16" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </form>
+                            <button type="submit" formaction="/delete/<%= result[i]._id %>" formmethod="post"
+                                title="Delete" class="text-red-500 hover:text-red-700 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 20"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
                         </div>
                     </li>
                     <% } %>
@@ -118,8 +117,8 @@
             <!-- Bulk Delete Button -->
             <div class="flex justify-end mt-6">
                 <button type="submit"
-                    class="bg-red-900 hover:bg-red-600 text-white font-medium px-6 py-2 rounded-md shadow-md transition-all duration-200 disabled:opacity-50"
-                    id="deleteSelectedBtn" disabled>
+                    class="bg-red-700 hover:bg-red-600 text-white font-medium px-6 py-2 rounded-md shadow-md transition-all duration-200 disabled:opacity-50"
+                    id="deleteSelectedBtn">
                     🗑️ Delete Selected
                 </button>
             </div>
