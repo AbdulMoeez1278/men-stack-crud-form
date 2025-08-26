@@ -46,12 +46,12 @@ app.get("/", async (req, res) => {
   res.render("home", { result });
 });
 
-app.get("/update/updateSuccess", (req, res) => {
-  res.render("updateSuccess"); // or send your success page response here
+app.get("/update", (req, res) => {
+  res.render("update");
 });
 
-app.get("/update", (req, res) => {
-  res.render("updates");
+app.get("/update/updateSuccess", (req, res) => {
+  res.render("updateSuccess"); // or send your success page response here
 });
 
 app.get("/success", (req, res) => {
@@ -83,7 +83,10 @@ app.get("/update/:id", async (req, res) => {
   const result = await collection.findOne({
     _id: new ObjectId(req.params.id),
   });
-  console.log("Received ID:", req.params.id);
+
+  // console the id to check if it is working properly or not
+  console.log("Received ID for Update:", req.params.id);
+
   if (result) {
     res.render("update", { result });
   } else {
@@ -106,6 +109,10 @@ app.post("/update/:id", async (req, res) => {
     },
   };
   const result = await collection.updateOne(filter, updateData);
+
+  // console the updated id's to check if these working properly or not
+  console.log(filter, updateData);
+
   if (result) {
     res.redirect("updateSuccess");
   } else {
@@ -116,7 +123,7 @@ app.post("/update/:id", async (req, res) => {
   }
 });
 
-// DELETE API Route - using POST API Route
+// DELETE API Route for single delete task - using POST API Route
 app.post("/delete/:id", async (req, res) => {
   const db = await connection();
   const collection = db.collection(collectionName);
@@ -125,7 +132,7 @@ app.post("/delete/:id", async (req, res) => {
   });
 
   // console the single id to check if it is working properly or not
-  console.log(req.params.id);
+  console.log("ID Deleted:", req.params.id);
 
   if (result) {
     res.redirect("/");
@@ -145,14 +152,16 @@ app.post("/multi-delete", async (req, res) => {
   let selectedTasks = undefined;
 
   // console the id's to check if it is working properly or not
-  console.log(req.body.selectedTasks);
+  console.log("Multiple Id's Deleted", req.body.selectedTasks);
 
+  // check the condition if it is array or not - if array then we traverse them to a new object id
   if (Array.isArray(req.body.selectedTasks)) {
     selectedTasks = req.body.selectedTasks.map((id) => new ObjectId(id));
   } else {
     selectedTasks = [new ObjectId(req.body.selectedTasks)];
   }
 
+  // for deleting multiple tasks from db or ui
   const result = await collection.deleteMany({ _id: { $in: selectedTasks } });
   if (result) {
     res.redirect("/");
