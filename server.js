@@ -67,6 +67,10 @@ app.post("/", async (req, res) => {
   const db = await connection();
   const collection = db.collection(collectionName);
   const result = await collection.insertOne(req.body);
+
+  // console the form data that is stored in db
+  console.log(req.body);
+
   if (result) {
     res.redirect("/success");
   } else {
