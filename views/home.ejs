@@ -49,11 +49,11 @@
     </form>
 
     <!-- Container for displaying list of users -->
-    <section class="w-full max-w-4xl bg-gray-200 p-6 rounded-lg shadow-md">
+    <section class="w-full max-w-4xl bg-gray-200 p-4 sm:p-6 rounded-lg shadow-md">
         <h3 class="text-xl font-semibold mb-4 text-gray-800 text-center">Users List</h3>
 
         <!-- List Heading -->
-        <div class="grid grid-cols-6 gap-4 px-4 py-2 bg-gray-300 font-semibold text-gray-800 rounded-t-md">
+        <div class="hidden sm:grid grid-cols-6 gap-4 px-4 py-2 bg-gray-300 font-semibold text-gray-800 rounded-t-md">
             <div>No.</div>
             <div>First Name</div>
             <div>Last Name</div>
@@ -63,34 +63,42 @@
 
         <form action="/multi-delete" method="post">
             <!-- User Data List -->
-            <ul id="usersList" class="divide-y divide-gray-200 bg-white rounded-b-md shadow">
+            <ul id="usersList" class="divide-y divide-gray-200 bg-white rounded-b-md shadow-lg">
                 <% for (let i=0; i < result.length; i++) { %>
+                    <li
+                        class="sm:grid sm:grid-cols-6 gap-4 px-4 py-3 items-center hover:bg-gray-50 transition flex flex-col sm:flex-row">
 
-                    <li class="grid grid-cols-6 gap-4 px-4 py-3 items-center hover:bg-gray-50 transition">
-                        <div class="flex items-center gap-x-3">
-                            <!-- Checkbox -->
+                        <!-- Serial + Checkbox -->
+                        <div class="flex items-center gap-x-3 mb-2 sm:mb-0">
                             <input type="checkbox" name="selectedTasks" value="<%= result[i]._id %>"
                                 class="user-checkbox w-4 h-4 text-blue-600 border-gray-300 rounded"
                                 title="Select for bulk delete" />
-
-                            <!-- Serial number -->
                             <span class="text-gray-800 font-medium">
                                 <%= i + 1 %>
                             </span>
                         </div>
 
-                        <div>
+                        <!-- First Name -->
+                        <div class="sm:col-auto">
+                            <span class="sm:hidden font-semibold">First Name: </span>
                             <%= result[i].firstname %>
                         </div>
-                        <div>
+
+                        <!-- Last Name -->
+                        <div class="sm:col-auto">
+                            <span class="sm:hidden font-semibold">Last Name: </span>
                             <%= result[i].lastname %>
                         </div>
-                        <div>
+
+                        <!-- City -->
+                        <div class="sm:col-auto">
+                            <span class="sm:hidden font-semibold">City: </span>
                             <%= result[i].city %>
                         </div>
 
-                        <!-- Edit Button -->
-                        <div class="col-span-2 flex justify-center items-center text-center gap-4">
+                        <!-- Actions -->
+                        <div class="flex gap-4 justify-start sm:justify-center sm:col-span-2 mt-2 sm:mt-0">
+                            <!-- Edit -->
                             <a href="/update/<%= result[i]._id %>" title="Update"
                                 class="text-blue-500 hover:text-blue-700 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -99,9 +107,8 @@
                                         d="M11 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
                                 </svg>
                             </a>
-                            <!-- </div> -->
 
-                            <!-- Delete Button -->
+                            <!-- Delete -->
                             <button type="submit" formaction="/delete/<%= result[i]._id %>" formmethod="post"
                                 title="Delete" class="text-red-500 hover:text-red-700 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 22"
@@ -116,7 +123,7 @@
             </ul>
 
             <!-- Bulk Delete Button -->
-            <div class="flex justify-end mt-6">
+            <div class="flex justify-center sm:justify-end mt-6">
                 <button type="submit"
                     class="bg-red-600 hover:bg-red-500 text-white font-medium px-6 py-2 rounded-md shadow-md transition-all duration-200 disabled:opacity-50"
                     id="deleteSelectedBtn">
@@ -125,6 +132,7 @@
             </div>
         </form>
     </section>
+
 
 </body>
 
