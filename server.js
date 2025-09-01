@@ -1,7 +1,7 @@
 const express = require("express"); // include express module
 // const mongoose = require("mongoose"); // include mongoose module
 const { MongoClient, ObjectId } = require("mongodb"); // import mongoClient module
-const path = require("path");
+// const path = require("path");
 
 // import the model - schema file
 // const form = require("./models/form");
@@ -42,37 +42,38 @@ app.get("/", async (req, res) => {
   const db = await connection();
   const collection = db.collection(collectionName);
   const result = await collection.find().toArray();
+  const personResult = "";
+  const curdStatus = "insert";
 
-  res.render("home", { result });
+  res.render("home", { result, curdStatus, personResult });
 });
 
-app.get("/update", (req, res) => {
-  res.render("update");
-});
+// app.get("/update", (req, res) => {
+//   res.render("update");
+// });
 
-app.get("/update/updateSuccess", (req, res) => {
-  res.render("updateSuccess"); // or send your success page response here
-});
+// app.get("/home/updateSuccess", (req, res) => {
+//   res.render("updateSuccess"); // or send your success page response here
+// });
 
-app.get("/success", (req, res) => {
-  res.render("success");
-});
+// app.get("/success", (req, res) => {
+//   res.render("success");
+// });
 
-app.get("/error", (req, res) => {
-  res.render("error");
-});
+// app.get("/error", (req, res) => {
+//   res.render("error");
+// });
 
 // POST API Route
-app.post("/", async (req, res) => {
+app.post("/insertRecords", async (req, res) => {
   const db = await connection();
   const collection = db.collection(collectionName);
   const result = await collection.insertOne(req.body);
-
-  // console the form data that is stored in db
-  console.log(req.body);
+  const curdStatus = "insert";
 
   if (result) {
-    res.redirect("/success");
+    res.redirect("/", result, curdStatus);
+    // res.redirect("/success");
   } else {
     res
       .status(500)
@@ -81,25 +82,7 @@ app.post("/", async (req, res) => {
 });
 
 // Update API Routes - update using GET & POST API Route
-app.get("/update/:id", async (req, res) => {
-  const db = await connection();
-  const collection = db.collection(collectionName);
-  const result = await collection.findOne({
-    _id: new ObjectId(req.params.id),
-  });
 
-  // console the id to check if it is working properly or not
-  console.log("Received ID for Update:", req.params.id);
-
-  if (result) {
-    res.render("update", { result });
-  } else {
-    res.status(400).send({
-      status: "error",
-      message: "Update failed. Please try again or contact support.",
-    });
-  }
-});
 
 app.post("/update/:id", async (req, res) => {
   const db = await connection();
@@ -118,7 +101,8 @@ app.post("/update/:id", async (req, res) => {
   console.log(filter, updateData);
 
   if (result) {
-    res.redirect("updateSuccess");
+    res.redirect("/");
+    // res.redirect("/update/" + req.params._id);
   } else {
     res.status(400).send({
       status: "error",
