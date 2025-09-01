@@ -1,10 +1,6 @@
 const express = require("express"); // include express module
 // const mongoose = require("mongoose"); // include mongoose module
 const { MongoClient, ObjectId } = require("mongodb"); // import mongoClient module
-// const path = require("path");
-
-// import the model - schema file
-// const form = require("./models/form");
 
 // initialize express as an app
 const app = express();
@@ -12,9 +8,6 @@ const app = express();
 // creating middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // This middleware is used to parse incoming form data
-
-// we can render static files as well
-// app.use(express.static("public")); // rendering static files
 
 // using template engine
 app.set("view engine", "ejs");
@@ -31,7 +24,6 @@ const connection = async () => {
   const connect = await client.connect();
   return await connect.db(dbName);
 };
-// mongoose.connect("mongodb://127.0.0.1:27017/crud-form");
 
 // intialized port and hostname
 const port = 3000;
@@ -47,22 +39,6 @@ app.get("/", async (req, res) => {
 
   res.render("home", { result, curdStatus, personResult });
 });
-
-// app.get("/update", (req, res) => {
-//   res.render("update");
-// });
-
-// app.get("/home/updateSuccess", (req, res) => {
-//   res.render("updateSuccess"); // or send your success page response here
-// });
-
-// app.get("/success", (req, res) => {
-//   res.render("success");
-// });
-
-// app.get("/error", (req, res) => {
-//   res.render("error");
-// });
 
 // POST API Route
 app.post("/insertRecords", async (req, res) => {
@@ -82,7 +58,27 @@ app.post("/insertRecords", async (req, res) => {
 });
 
 // Update API Routes - update using GET & POST API Route
+app.get("/update/:id", async (req, res) => {
+  const db = await connection();
+  const collection = db.collection(collectionName);
+  const curdStatus = "update";
+  const result = await collection.find().toArray();
+  const personResult = await collection.findOne({
+    _id: new ObjectId(req.params.id),
+  });
 
+  // console the id to check if it is working properly or not
+  console.log("Received ID for Update:", req.params.id);
+
+  if (result) {
+    res.render("home", { result, curdStatus, personResult });
+  } else {
+    res.status(400).send({
+      status: "error",
+      message: "Update failed. Please try again or contact support.",
+    });
+  }
+});
 
 app.post("/update/:id", async (req, res) => {
   const db = await connection();
